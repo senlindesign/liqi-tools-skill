@@ -1,0 +1,12 @@
+{"prompt":"用利器帮我找几个适合长篇写作的工具","should_trigger":true,"reason":"明确点名利器并按任务找工具"}
+{"prompt":"有哪些创作者用过 Notion，他们分别怎么用？","should_trigger":true,"reason":"跨创作者工具聚合"}
+{"prompt":"找一个独立创作者制作人物视频的完整工作流","should_trigger":true,"reason":"创作者工作流案例"}
+{"prompt":"利器访谈里谁推荐过密码管理工具？","should_trigger":true,"reason":"访谈来源与工具推荐"}
+{"prompt":"我想做播客，看看别人从录音到发布怎么做","should_trigger":true,"reason":"创作任务与完整流程"}
+{"prompt":"创作者平时用什么软件管理阅读资料？","should_trigger":true,"reason":"创作者经验型工具问题"}
+{"prompt":"Photoshop 2026 最新价格是多少？","should_trigger":false,"reason":"只问当前产品价格"}
+{"prompt":"帮我安装最新版 Notion","should_trigger":false,"reason":"软件安装操作"}
+{"prompt":"比较今天最热门的十款 AI 视频工具","should_trigger":false,"reason":"当前市场排行而非利器语料"}
+{"prompt":"修复这个 Python 函数的异常","should_trigger":false,"reason":"普通编程任务"}
+{"prompt":"总结我上传的采访稿","should_trigger":false,"reason":"与利器语料无关的文档总结"}
+{"prompt":"查询 Final Cut Pro 当前支持哪些视频格式","should_trigger":false,"reason":"当前产品规格"}

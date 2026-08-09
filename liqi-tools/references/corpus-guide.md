@@ -43,16 +43,18 @@ Useful entity kinds include `software`, `hardware`, `recommended_resource`, and 
 
 ## Search Notes
 
-`scripts/search_liqi.py` performs lightweight token matching over entity names, aliases, headings, contexts, and interview titles. It is good for discovery but not semantic proof.
+`scripts/search_liqi.py` performs deterministic intent expansion, constraint separation, local evidence-window matching, and reviewed-evidence ranking over the SQLite data. It is a retrieval aid, not semantic proof.
 
 Use `--mode workflow` to search creator-led cases and `--mode tool` to aggregate one tool across creators. Both modes are retrieval aids; important claims still require checking the original Markdown.
 
 Recommended practice:
 
-1. Run several adjacent queries, such as `"视频 剪辑"`, `"剪片"`, `"影像 后期"`, or `"写作 笔记"`.
+1. Start with the user's natural query. Common compact Chinese phrases such as `视频剪辑` and `密码管理` are normalized automatically.
 2. Compare repeated entities and source excerpts.
 3. Open the Markdown interview when the result depends on exact creator wording.
-4. Label noisy results as contextual co-mentions instead of recommendations.
+4. Present `已核对访谈` as stronger evidence and `访谈线索` as a lead. Internal status names remain machine-facing.
+
+The distributable package contains the SQLite runtime database, reviewed tool/workflow records, and full interview Markdown. Maintenance-only JSONL layers remain in the repository root and are rebuilt before release.
 
 ## Evidence And Copyright
 

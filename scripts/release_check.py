@@ -21,12 +21,9 @@ def main() -> None:
         SKILL / "scripts/search_liqi.py",
         SKILL / "references/data/liqi-tools.sqlite3",
         SKILL / "references/data/reviewed-tools.jsonl",
-        SKILL / "references/data/review-queue.jsonl",
-        SKILL / "references/data/creator-profiles.jsonl",
-        SKILL / "references/data/workflow-cases.jsonl",
-        SKILL / "references/data/tool-aggregates.jsonl",
         SKILL / "references/data/reviewed-workflow-cases.jsonl",
         ROOT / "data/eval-cases.jsonl",
+        ROOT / "data/trigger-eval-cases.jsonl",
     ]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
@@ -43,6 +40,9 @@ def main() -> None:
     reviewed = [json.loads(line) for line in (SKILL / "references/data/reviewed-tools.jsonl").read_text(encoding="utf-8").splitlines()]
     assert len(reviewed) == 40
     assert all(row["review_status"] == "reviewed" for row in reviewed)
+    trigger_cases = [json.loads(line) for line in (ROOT / "data/trigger-eval-cases.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert len(trigger_cases) >= 10
+    assert {row["should_trigger"] for row in trigger_cases} == {True, False}
     leaked_paths = [path for path in SKILL.rglob("*") if path.is_file() and "file://" in path.read_text(encoding="utf-8", errors="ignore")]
     assert not leaked_paths, "local file URI in release package: " + ", ".join(str(path.relative_to(ROOT)) for path in leaked_paths)
     evaluation = subprocess.run([sys.executable, str(ROOT / "scripts/run_evals.py")], cwd=ROOT, text=True, capture_output=True, check=False)

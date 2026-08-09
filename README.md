@@ -3,6 +3,8 @@
 [![Codex](https://img.shields.io/badge/Codex-Agent%20Skill-111111?style=flat-square)](https://developers.openai.com/codex/skills)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Agent%20Skill-D97757?style=flat-square)](https://code.claude.com/docs/en/skills)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f?style=flat-square)](LICENSE)
+[![Validate Skill](https://img.shields.io/github/actions/workflow/status/senlindesign/liqi-tools-skill/validate.yml?branch=main&style=flat-square&label=Validation)](https://github.com/senlindesign/liqi-tools-skill/actions/workflows/validate.yml)
+[![Version](https://img.shields.io/badge/version-0.2.0-4c6ef5?style=flat-square)](https://github.com/senlindesign/liqi-tools-skill/releases)
 
 从「利器」创作者访谈出发，按任务、工作流或具体工具，寻找有出处、有个人经验的工具建议。
 
@@ -38,7 +40,7 @@
 | 按 Workflow / Case 找 | 「一个小团队怎么完成播客的选题、录制和发布？」 | 相似创作者、工作阶段、每一步使用的工具和方法 |
 | 按工具聚合 | 「利器里的创作者都怎么用 Notion？」 | 不同创作者的使用场景、评价差异和对应访谈 |
 
-你也可以直接描述自己的限制，例如平台、预算、协作方式、隐私要求或学习成本。信息足够时，Skill 会直接检索；信息不足时，只补问最关键的一项。
+你也可以直接描述平台、免费/开源、团队协作或离线使用等限制。信息足够时，Skill 会直接检索；只有一个偏好确实会改变结果时，它才补问。历史访谈没有可靠约束证据时，Skill 会明确说明，而不是猜测。
 
 ## 回答示例
 
@@ -91,7 +93,7 @@ npx skills add senlindesign/liqi-tools-skill --skill liqi-tools -g -a codex -a c
 
 ## 数据说明
 
-当前语料包含 251 篇创作者访谈 Markdown，并据此建立创作者档案、机器生成的工作流线索和跨创作者工具聚合。首个版本包含 40 条人工校准工具记录和 6 个完整人工校准 Workflow / Case；其余机器抽取结果会明确标记为 `provisional`，只作为发现线索。
+当前语料包含 251 篇创作者访谈 Markdown，并据此建立创作者档案、机器生成的工作流线索和跨创作者工具聚合。当前版本包含 40 条人工核对工具记录和 6 个完整人工核对 Workflow / Case；其余机器抽取结果只作为访谈线索。安装包保留运行时数据库、人工核对层和原始访谈，维护用的中间 JSONL 只留在仓库根目录，避免重复打包。
 
 ## 维护与校准
 
@@ -101,13 +103,13 @@ npx skills add senlindesign/liqi-tools-skill --skill liqi-tools -g -a codex -a c
 make release-check
 ```
 
-它会重建档案层和数据库、同步 Skill 数据包、执行数据验证、运行真实问题评测，并检查 Skill 格式。工具实体按 `data/review-queue.jsonl` 分批复核，人工确认结果写入 `data/reviewed-tools.jsonl`；完整工作流案例写入 `data/reviewed-workflow-cases.jsonl`。
+它会重建档案层和数据库、同步 Skill 数据包、执行数据验证、运行真实问题评测，并检查 Skill 格式。工具实体按 `data/review-queue.jsonl` 分批复核，人工确认结果写入 `data/reviewed-tools.jsonl`；完整工作流案例写入 `data/reviewed-workflow-cases.jsonl`。检索评测同时检查正例、负例、排序、无结果、输出体积和执行时间，触发边界样例保存在 `data/trigger-eval-cases.jsonl`。
 
 发布版本同时包含 `reviewed` 与 `provisional` 数据。前者已经核对创作者、场景、证据和推荐强度；后者不能被表述为确定推荐。访谈属于历史资料，工具当前的价格、版本、可用性和安全性需要另行验证。
 
 ## 使用边界与版权
 
-本项目的代码与原创文档使用 [MIT License](LICENSE)。归档访谈及由访谈内容衍生的数据遵循利器网站声明的 CC-BY-NC-SA 条款。
+本项目的代码与原创文档使用 [MIT License](LICENSE)。归档访谈及由访谈内容衍生的数据遵循利器网站声明的 CC-BY-NC-SA 条款；完整的范围划分见[语料许可与使用说明](CORPUS_LICENSE.md)。
 
 使用与再发布时请保留「利器」署名、原始链接和许可信息。
 

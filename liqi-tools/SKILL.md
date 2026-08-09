@@ -1,86 +1,65 @@
 ---
 name: liqi-tools
-description: Source-backed recommendations from the Liqi.io creator interview corpus. Use when a user asks for tools, apps, hardware, workflows, or resources recommended by creators in 利器/liqi.io interviews, especially for task-based recommendations such as writing, video editing, programming, design, productivity, reading, photography, note-taking, or creative work.
+description: 从利器 liqi.io 创作者访谈中检索有来源的工具、工作流与个人使用经验。用户询问写作、视频剪辑、播客、设计、开发、效率、阅读、摄影、笔记等创作任务用什么工具，想看谁做过类似工作，或想比较不同创作者如何使用同一工具时使用。若只需当前产品参数、价格或通用软件排行，不要单独依赖本 Skill。
 ---
 
-# Liqi Tools
+# 利器
 
-This is an Agent Skills-compatible package. The core contract is this `SKILL.md`; Codex may additionally read `agents/openai.yaml` for UI metadata, while Claude Code discovers the same file when the directory is installed under `.claude/skills/liqi-tools/`.
+从创作者出发，依据利器历史访谈回答工具与工作方式问题。保留具体的人、具体的场景、经验差异和原始访谈链接；不要把出现次数写成推荐排名。
 
-Use this skill to recommend tools and resources from the archived 利器 interview corpus with source links and short evidence. The bundled corpus currently contains 251 creator profiles, 848 machine-generated workflow cases, 6 reviewed workflow cases, 2,983 cross-creator tool aggregates, 7,712 provisional mentions, and 40 reviewed tool records across two batches.
+## 判断入口
 
-## Use-time onboarding
+- **按任务找工具**：用户要快速完成一件事。使用默认 `task` 模式。
+- **按 Workflow / Case 找**：用户问“怎么做”“完整流程”“谁做过类似事情”。先使用 `workflow` 模式，再按需补充 `task` 结果。
+- **按工具聚合**：用户点名某个工具，想看不同创作者的具体用法与评价。使用 `tool` 模式。
+- `creator` 模式只用于内部寻找相近创作者，不作为独立的对外入口。
 
-On the first invocation, give a one-sentence orientation: this Skill recommends tools mentioned by 利器 creators and links back to the original interviews. Then ask for the user's goal if it is not already clear.
+## 开始对话
 
-Collect only the minimum missing context, preferably in one question:
+1. 用户目标具体时，直接检索，不重复介绍 Skill，不强制追问。
+2. 用户只说“推荐工具”时，用一句话说明可依据利器创作者的历史经验检索，并只问一个会实际改变排序的问题。
+3. 只询问检索能够支持的限制：平台、免费/开源、团队协作、离线/本地。证据不足时明确说没有可靠信息，不猜测。
+4. 用户在探索时，提供三个入口：按任务、按 Workflow / Case、按工具聚合。
 
-- task or desired outcome
-- platform or environment (for example macOS, Windows, iOS, Android, web)
-- important constraints such as budget, privacy, collaboration, learning curve, or open source
+详细对话规则见 [onboarding.md](references/onboarding.md)。
 
-If the request is already specific, skip the questions and search immediately. Do not make the user fill out a form. If the user is exploring, offer three entry points: recommend by task, browse by creator, or find the original interview.
+## 检索
 
-For the first answer, return at most three strong candidates and label each as `已人工校准` or `机器初筛`. Include the fit, use scenario, creator, original interview link, and a short paraphrased evidence note. End with one refinement question, such as whether the user prioritizes price, platform, or workflow fit. Only expand the list after the user asks or after the constraints are clear.
-
-Never imply that a creator's historical use guarantees current availability, pricing, security, or suitability. For those questions, say that the interview is historical and offer a separate current-web verification.
-
-## Quick Start
-
-Run the local search script first:
+先定位本文件所在的 Skill 目录，再运行其中的脚本；不要假定用户当前工作目录就是 Skill 目录。
 
 ```bash
-python3 scripts/search_liqi.py "视频 剪辑" --kind software --limit 8
-python3 scripts/search_liqi.py "播客" --mode workflow --limit 5
-python3 scripts/search_liqi.py "Notion" --mode tool --limit 3
-python3 scripts/search_liqi.py "独立开发者" --mode creator --limit 5
-python3 scripts/search_liqi.py "写作" --include-resources --limit 8
-python3 scripts/search_liqi.py "密码 管理" --kind software --json
+python3 <skill-dir>/scripts/search_liqi.py "视频剪辑" --kind software --limit 3 --json
+python3 <skill-dir>/scripts/search_liqi.py "播客" --mode workflow --limit 3 --json
+python3 <skill-dir>/scripts/search_liqi.py "Notion" --mode tool --limit 3 --json
 ```
 
-Use `--kind software` or `--kind hardware` when the user asks for tools. Use `--include-resources` when books, websites, media, or articles may be useful. Use `--json` when you need structured output for ranking, grouping, or further processing.
+在 Claude Code 中可直接使用：
 
-## Entry modes
+```bash
+python3 "${CLAUDE_SKILL_DIR}/scripts/search_liqi.py" "视频剪辑" --kind software --limit 3 --json
+```
 
-Route the user's intent to one of three modes:
+- 默认先取 3 个结果，并使用 `--json` 读取结构化字段。
+- 用户明确要硬件时加 `--kind hardware`；默认任务检索隐藏硬件。
+- 用户要书、网站、媒体或文章时加 `--include-resources`。
+- 只有选定结果后，才打开 `references/interviews/full/` 中的原访谈 Markdown；不要预先加载整批访谈。
+- 若返回 `result_status: no_results`，说明语料中没有足够证据，并尝试建议词、放宽限制或切换入口；不要静默返回，也不要补造答案。
 
-- **Task mode** (default): quick, short-list recommendations for a concrete task.
-- **Workflow mode** (`--mode workflow`): creator-led cases showing who did similar work, which stages they used, and which tools appeared in each stage. Prefer `reviewed_case` results; only use `machine_case` as a clearly marked lead.
-- **Tool mode** (`--mode tool`): one tool across creators, grouped by use case and reviewed recommendation strength. Attach source links directly to the aggregated answer; do not make the user request a separate trace mode.
-- **Creator mode** (`--mode creator`): internal browsing of creator dossiers by role or focus area; use it to support workflow answers, not as a fourth user-facing promise.
+## 组织回答
 
-When a task question implies a complete process, combine workflow mode first and task mode second: identify comparable creators and cases, then extract a short tool recommendation from them.
+1. 先读 [answer-formats.md](references/answer-formats.md)。
+2. 第一轮最多给 3 个候选。
+3. 将 `已核对访谈` 作为较强证据，将 `访谈线索` 明确写成待核对线索。不要向用户暴露内部状态名。
+4. 每项包含：工具或工作流、适用场景、创作者、简短转述、原始访谈链接。
+5. Workflow 回答先介绍创作者与任务，再讲阶段和工具。工具聚合回答按“创作者 → 用法 → 证据”分别呈现，不合并成统一评价。
+6. 只有用户的偏好会改变下一轮结果时，才在结尾问一个收敛问题。
+7. 用户追问创作者的具体说法时，再打开对应 Markdown 核对并做短转述。
 
-## Answering Workflow
+## 边界
 
-1. Search with `scripts/search_liqi.py` using the user's task words and close synonyms.
-2. Prefer results with direct task-context evidence, repeated interview appearances, and clear creator usage over generic co-mentions.
-3. Open the relevant original Markdown file under `references/interviews/full/` when the evidence excerpt is ambiguous or when the user asks how the creator described the tool.
-4. Return a compact recommendation list with: tool/resource name, why it fits, suitable scenario, creator/interview source, original liqi.io URL, and a short paraphrased evidence note.
-5. State uncertainty when a result is only a provisional extraction or appears because of contextual co-mention.
-6. In workflow mode, describe the creator and the work before naming tools. In tool mode, preserve differences between creators instead of averaging them into one verdict.
-7. Read `references/answer-formats.md` before composing a user-facing recommendation, workflow, or cross-creator aggregation.
+- 访谈记录的是历史使用经验，不保证工具今天仍可用、仍免费或仍安全；涉及当前事实时另行联网核实。
+- 将语料作为请求时检索的参考资料，不用于模型训练或微调。
+- 保留利器署名与原始链接，不复制整篇访谈或大段连续原文。
+- 机器抽取可能包含共现噪音。重要结论优先使用已核对记录，并在需要时核对原访谈。
 
-## Corpus Files
-
-- `scripts/search_liqi.py`: search entities and mentions in the bundled SQLite database.
-- `references/data/liqi-tools.sqlite3`: primary local database for search and custom SQL.
-- `references/data/entities.provisional.jsonl`: provisional normalized entities.
-- `references/data/review-queue.jsonl`: entity-level queue for human confirmation of names, recommendation status, use case, and evidence.
-- `references/data/reviewed-tools.jsonl`: manually checked first-batch records with explicit use cases and recommendation strength.
-- `references/data/creator-profiles.jsonl`: one dossier per included creator/interview, including stages, tool set, and case IDs.
-- `references/data/workflow-cases.jsonl`: machine-derived cases grouped by creator and workflow stage.
-- `references/data/reviewed-workflow-cases.jsonl`: manually checked complete cases with task, stages, principles, limitations, and source link.
-- `references/data/tool-aggregates.jsonl`: cross-creator tool view with use cases, counts, and review state.
-- `references/data/tool-sections.jsonl`: tool-related interview sections.
-- `references/data/interviews-manifest.jsonl`: source URLs, dates, IDs, and inclusion decisions.
-- `references/interviews/full/*.md`: full Markdown interview archives with frontmatter and original source URL.
-- `references/corpus-guide.md`: schema, limitations, and licensing/use notes. Read it before custom SQL, corpus maintenance, or higher-stakes claims.
-- `references/onboarding.md`: detailed first-use flow and output acceptance checks; read it when designing or evaluating the conversation experience.
-- `references/answer-formats.md`: compact output contracts for task, workflow, and tool modes.
-
-## Source And License Boundaries
-
-Treat the corpus as reference material, not training data. The source site indicated CC-BY-NC-SA in the archived pages. Return summaries, short evidence snippets, and original links; do not reproduce full interviews or large contiguous passages.
-
-The database is provisional. Entity normalization and mention extraction are automated, so verify important recommendations against the original Markdown and link before presenting them as strong claims. The review queue identifies what still needs confirmation; it is not a claim that every provisional entity is a recommendation.
+语料范围、数据库结构与维护说明见 [corpus-guide.md](references/corpus-guide.md)。

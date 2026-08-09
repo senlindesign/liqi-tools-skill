@@ -6,7 +6,7 @@ Use the smallest format that preserves creator context, source, and uncertainty.
 
 Return at most three candidates. For each include:
 
-- Tool name and `已人工校准` or `机器初筛`
+- Tool name and `已核对访谈` or `访谈线索`
 - Fit and concrete scenario
 - Creator and original interview link
 - Short paraphrased evidence
@@ -23,7 +23,7 @@ Return:
 4. A limitation or context boundary
 5. The original interview link
 
-Prefer `reviewed_case`. Call a `machine_case` a lead, not a complete workflow.
+Prefer results labeled `已核对访谈`. Call a `访谈线索` a lead, not a complete workflow.
 
 ## Tool mode
 

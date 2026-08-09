@@ -11,18 +11,21 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "data"
 TARGET = ROOT / "liqi-tools/references/data"
 FILES = (
+    "reviewed-tools.jsonl",
+    "reviewed-workflow-cases.jsonl",
+    "liqi-tools.sqlite3",
+)
+
+NON_RUNTIME_FILES = (
     "interviews-manifest.jsonl",
     "tool-sections.jsonl",
     "entities.provisional.jsonl",
     "review-queue.jsonl",
-    "reviewed-tools.jsonl",
     "creator-profiles.jsonl",
     "workflow-cases.jsonl",
-    "reviewed-workflow-cases.jsonl",
     "tool-aggregates.jsonl",
     "tool-mentions.schema.json",
     "tool-mentions.sample.jsonl",
-    "liqi-tools.sqlite3",
 )
 
 
@@ -33,6 +36,10 @@ def main() -> None:
         if not source.exists():
             raise SystemExit(f"missing source artifact: {source}")
         shutil.copy2(source, TARGET / name)
+    for name in NON_RUNTIME_FILES:
+        stale = TARGET / name
+        if stale.exists():
+            stale.unlink()
     interview_source = ROOT / "interviews"
     interview_target = ROOT / "liqi-tools/references/interviews"
     copied_interviews = 0

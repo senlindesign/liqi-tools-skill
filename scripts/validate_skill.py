@@ -26,7 +26,12 @@ def main() -> None:
     agent_yaml = SKILL / "agents/openai.yaml"
     assert agent_yaml.exists(), "OpenAI agent metadata missing"
     agent_text = agent_yaml.read_text(encoding="utf-8")
-    assert re.search(r'(?m)^interface:\n(?:.*\n)*?  default_prompt: "Use \$liqi-tools ', agent_text), "default prompt must be nested under interface and invoke $liqi-tools"
+    interface = re.search(r'(?ms)^interface:\n(?P<body>(?:  .*\n)+)', agent_text)
+    assert interface, "openai.yaml must contain an interface mapping"
+    assert re.search(r'^  display_name: ".+"$', interface.group("body"), re.MULTILINE), "display_name missing"
+    assert re.search(r'^  short_description: ".{10,}"$', interface.group("body"), re.MULTILINE), "short_description missing"
+    prompt = re.search(r'^  default_prompt: "(.+)"$', interface.group("body"), re.MULTILINE)
+    assert prompt and "$liqi-tools" in prompt.group(1), "default prompt must invoke $liqi-tools"
     print("Skill structure OK")
 
 
