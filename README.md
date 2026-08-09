@@ -63,19 +63,19 @@ Skill 不会只回答「Notion 是笔记工具」。它会分别告诉你：hb �
 ### Codex
 
 ```bash
-npx skills add senlindesign/liqi --skill liqi-tools -g -a codex -y
+npx skills add senlindesign/liqi-tools-skill --skill liqi-tools -g -a codex -y
 ```
 
 ### Claude Code
 
 ```bash
-npx skills add senlindesign/liqi --skill liqi-tools -g -a claude-code -y
+npx skills add senlindesign/liqi-tools-skill --skill liqi-tools -g -a claude-code -y
 ```
 
 也可以同时安装到两个 Agent：
 
 ```bash
-npx skills add senlindesign/liqi --skill liqi-tools -g -a codex -a claude-code -y
+npx skills add senlindesign/liqi-tools-skill --skill liqi-tools -g -a codex -a claude-code -y
 ```
 
 手动安装时，将仓库中的 `liqi-tools/` 复制到 `~/.codex/skills/liqi-tools/` 或 `~/.claude/skills/liqi-tools/`。两者使用同一个核心 `SKILL.md`；Codex 还会读取可选的 `agents/openai.yaml` 界面元数据。
