@@ -1,0 +1,8 @@
+{"id":"task-video-editing","mode":"task","query":"视频 剪辑","args":["--kind","software"],"must_include":["DaVinci Resolve","https://liqi.io/linklao/"],"purpose":"任务入口优先返回带人工校准证据的视频工具。"}
+{"id":"task-password-management","mode":"task","query":"密码 管理","args":["--kind","software"],"must_include":["1Password","https://liqi.io/lepture/"],"purpose":"任务入口能返回明确推荐的密码管理工具。"}
+{"id":"workflow-podcast","mode":"workflow","query":"播客 制作","args":[],"must_include":["reviewed_case","https://liqi.io/weareones/"],"purpose":"工作流入口优先返回完整人工校准播客案例。"}
+{"id":"workflow-video","mode":"workflow","query":"视频 制作","args":[],"must_include":["马晓雯","Final Cut Pro","reviewed_case"],"purpose":"工作流入口返回创作者、流程工具和校准状态。"}
+{"id":"workflow-writing","mode":"workflow","query":"写作","args":[],"must_include":["宝婷","Ulysses","reviewed_case"],"purpose":"工作流入口支持个人知识工作流。"}
+{"id":"tool-notion","mode":"tool","query":"Notion","args":[],"must_include":["团队设计语言文档协作","飞羽醉月","https://liqi.io/lixingyu/"],"purpose":"工具入口保留跨创作者的不同使用场景和来源。"}
+{"id":"tool-password","mode":"tool","query":"1Password","args":[],"must_include":["explicit_recommendation","https://liqi.io/lepture/"],"purpose":"工具入口聚合已校准的推荐强度。"}
+{"id":"creator-indie-dev","mode":"creator","query":"独立开发者","args":[],"must_include":["Jason","cases"],"purpose":"创作者档案能够按角色发现相近案例。"}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Liqi Tools"
+  short_description: "Recommend creator-tested tools from Liqi interviews"
+  default_prompt: "Use $liqi-tools to recommend source-backed tools, workflows, or creator cases from Liqi interviews."
+
+policy:
+  allow_implicit_invocation: true
