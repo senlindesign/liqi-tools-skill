@@ -1,4 +1,4 @@
-# 利器
+# 利器 Skill
 
 [![Codex](https://img.shields.io/badge/Codex-Agent%20Skill-111111?style=flat-square)](https://developers.openai.com/codex/skills)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Agent%20Skill-D97757?style=flat-square)](https://code.claude.com/docs/en/skills)
